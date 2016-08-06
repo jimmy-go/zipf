@@ -23,6 +23,8 @@
 // SOFTWARE.
 package zipfs
 
+// TODO; make concurrent walk path.
+
 import (
 	"bufio"
 	"encoding/json"
@@ -161,8 +163,8 @@ func processLine(line string) []string {
 
 // Term struct contain final struct for terms/words
 type Term struct {
-	Word  string
-	Count int32
+	Word  string `json:"word"`
+	Count int32  `json:"count"`
 }
 
 // ByCount implement sort interface

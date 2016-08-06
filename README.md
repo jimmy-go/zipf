@@ -1,11 +1,11 @@
-### Zipf's Law code analyzer
+###Zipf's Law code analyzer
 
-##### Install:
+####Install:
 ```
 go get github.com/jimmy-go/zipfs/cmd/zipfs
 ```
 
-##### Flags:
+####Flags:
 ```
   -format string
     	Output format. json | text (default "text")
@@ -15,11 +15,11 @@ go get github.com/jimmy-go/zipfs/cmd/zipfs
     	Filepath to walk.
 ```
 
-##### Credits:
+####Credits:
 
 * [Zip's Law](https://en.wikipedia.org/wiki/Zipf%27s_law)
 
-License:
+####License:
 
 The MIT License (MIT)
 

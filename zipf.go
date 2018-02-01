@@ -3,7 +3,8 @@ package zipf
 import (
 	"bufio"
 	"errors"
-	"log"
+	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"sort"
@@ -11,14 +12,11 @@ import (
 	"sync"
 )
 
-var (
-	errEmpty = errors.New("zipf: term is empty")
-)
-
 // Zipf type.
 type Zipf struct {
 	path       string
 	limit      int
+	out        io.Writer
 	words      map[string]int32
 	counts     map[int32]string
 	collection []Term
@@ -26,29 +24,28 @@ type Zipf struct {
 }
 
 // New returns a Zipf analiser.
-func New(dir string, limit int) *Zipf {
+func New(dir string, limit int, output io.Writer) (*Zipf, error) {
+	if dir == "" {
+		return nil, errors.New("empty dir")
+	}
 	z := &Zipf{
 		path:   dir,
 		limit:  limit,
+		out:    output,
 		words:  make(map[string]int32),
 		counts: make(map[int32]string),
 	}
-	return z
+	return z, nil
 }
 
-// Add queue words to the map of words and sums 1 to existent words.
-func (z *Zipf) Add(s string) error {
-	z.RLock()
-	defer z.RUnlock()
-
-	if len(s) < 1 {
-		return errEmpty
+// Run executes the file path walk and report.
+func (z *Zipf) Run() error {
+	if err := z.Walk(z.path); err != nil {
+		return err
 	}
-	count, ok := z.words[s]
-	if !ok {
-		z.words[s] = 1
+	if err := z.Report(); err != nil {
+		return err
 	}
-	z.words[s] = count + 1
 	return nil
 }
 
@@ -75,13 +72,14 @@ func (z *Zipf) Walk(dir string) error {
 
 			words := processLine(line)
 			if err != nil {
-				// we don't return error here because .DS_Store file is created automatically
-				//
-				// if buggy we need a rule to skip files later.
-				log.Printf("Walk : err [%s]", err)
 				continue
 			}
-			for _, w := range words {
+			for _, s := range words {
+				w := strings.TrimSpace(s)
+				if len(w) < 1 {
+					continue
+				}
+				// log.Printf("added Word [%s]", w)
 				if err := z.Add(w); err != nil {
 					return err
 				}
@@ -90,6 +88,22 @@ func (z *Zipf) Walk(dir string) error {
 		return nil
 	})
 	return err
+}
+
+// Add queue words to the map of words and sums 1 to existent words.
+func (z *Zipf) Add(s string) error {
+	z.RLock()
+	defer z.RUnlock()
+
+	if s == "" {
+		return errors.New("empty word")
+	}
+	count, ok := z.words[s]
+	if !ok {
+		z.words[s] = 1
+	}
+	z.words[s] = count + 1
+	return nil
 }
 
 // Report report words count without order.
@@ -109,7 +123,8 @@ func (z *Zipf) Report() error {
 	sort.Sort(ByCountAsc(z.collection))
 
 	for i := range z.collection {
-		log.Printf("[%s] [%v]", z.collection[i].Word, z.collection[i].Count)
+		x := z.collection[i]
+		fmt.Fprintf(z.out, "%s: %d\n", x.Word, x.Count)
 	}
 	return nil
 }

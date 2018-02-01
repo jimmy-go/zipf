@@ -4,19 +4,24 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
 
 	"github.com/jimmy-go/zipf"
 )
 
 var (
 	dir   = flag.String("path", "", "Directory.")
-	limit = flag.Int("limit", 500, "Number of words to display.")
+	limit = flag.Int("limit", 100, "Number of words to display.")
 )
 
 func main() {
 	flag.Parse()
+	log.SetFlags(log.Lshortfile)
 
-	z := zipf.New(*dir, *limit)
+	z, err := zipf.New(*dir, *limit, os.Stdout)
+	if err != nil {
+		log.Fatal(err)
+	}
 	if err := z.Run(); err != nil {
 		log.Fatal(err)
 	}

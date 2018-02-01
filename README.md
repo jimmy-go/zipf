@@ -14,12 +14,10 @@ go get github.com/jimmy-go/zipf
 
 ### Usage:
 ```
-  -format string
-    	Output format. json | text (default "text")
+  -path string
+    	Directory.
   -limit int
     	Number of words to display. (default 500)
-  -path string
-    	Filepath to walk.
 ```
 
 ## License:

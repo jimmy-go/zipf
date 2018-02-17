@@ -1,5 +1,9 @@
 ## [Zipf's Law](https://en.wikipedia.org/wiki/Zipf%27s_law) analiser.
 
+<p align="center">
+    <img src="logo.png" width="200" />
+</p>
+
 [![License MIT](https://img.shields.io/npm/l/express.svg)](http://opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.org/jimmy-go/zipf.svg?branch=master)](https://travis-ci.org/jimmy-go/zipf)
 [![Go Report Card](https://goreportcard.com/badge/github.com/jimmy-go/zipf)](https://goreportcard.com/report/github.com/jimmy-go/zipf)
@@ -13,12 +17,14 @@ go get github.com/jimmy-go/zipf
 ```
 
 ### Usage:
+
 ```
-  -path string
-    	Directory.
-  -limit int
-    	Number of words to display. (default 500)
+zipf -path someDir -limit=100
 ```
+
+* path string: Directory to analise.
+
+* limit int: Number of words to display. (default 500)
 
 ## License:
 

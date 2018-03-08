@@ -1,25 +1,32 @@
-####Zipf's Law code analyzer
+## [Zipf's Law](https://en.wikipedia.org/wiki/Zipf%27s_law) analiser.
 
-#####Install:
+<p align="center">
+    <img src="logo.png" width="200" />
+</p>
+
+[![License MIT](https://img.shields.io/npm/l/express.svg)](http://opensource.org/licenses/MIT)
+[![Build Status](https://travis-ci.org/jimmy-go/zipf.svg?branch=master)](https://travis-ci.org/jimmy-go/zipf)
+[![Go Report Card](https://goreportcard.com/badge/github.com/jimmy-go/zipf)](https://goreportcard.com/report/github.com/jimmy-go/zipf)
+[![GoDoc](http://godoc.org/github.com/jimmy-go/zipf?status.png)](http://godoc.org/github.com/jimmy-go/zipf)
+[![Coverage Status](https://coveralls.io/repos/github/jimmy-go/zipf/badge.svg?branch=master)](https://coveralls.io/github/jimmy-go/zipf?branch=master)
+
+### Install:
+
 ```
-go get github.com/jimmy-go/zipfs/cmd/zipfs
+go get github.com/jimmy-go/zipf
 ```
 
-#####Flags:
+### Usage:
+
 ```
-  -format string
-    	Output format. json | text (default "text")
-  -limit int
-    	Number of words to display. (default 500)
-  -path string
-    	Filepath to walk.
+zipf -path someDir -limit=100
 ```
 
-#####Credits:
+* path string: Directory to analise.
 
-* [Zip's Law](https://en.wikipedia.org/wiki/Zipf%27s_law)
+* limit int: Number of words to display. (default 500)
 
-#####License:
+## License:
 
 The MIT License (MIT)
 

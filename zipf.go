@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
-	"strings"
 	"sync"
 )
 
@@ -17,23 +16,25 @@ type Zipf struct {
 	path       string
 	limit      int
 	out        io.Writer
-	words      map[string]int32
-	counts     map[int32]string
+	symbols    bool
+	words      map[string]int64
+	counts     map[int64]string
 	collection []Term
 	sync.RWMutex
 }
 
 // New returns a Zipf analiser.
-func New(dir string, limit int, output io.Writer) (*Zipf, error) {
+func New(dir string, limit int, symbols bool, output io.Writer) (*Zipf, error) {
 	if dir == "" {
 		return nil, errors.New("empty dir")
 	}
 	z := &Zipf{
-		path:   dir,
-		limit:  limit,
-		out:    output,
-		words:  make(map[string]int32),
-		counts: make(map[int32]string),
+		path:    dir,
+		limit:   limit,
+		out:     output,
+		symbols: symbols,
+		words:   make(map[string]int64),
+		counts:  make(map[int64]string),
 	}
 	return z, nil
 }
@@ -70,18 +71,27 @@ func (z *Zipf) Walk(dir string) error {
 				continue
 			}
 
-			words := processLine(line)
+			// Words
+			words, err := SplitWord(line)
 			if err != nil {
 				continue
 			}
-			for _, s := range words {
-				w := strings.TrimSpace(s)
-				if len(w) < 1 {
-					continue
-				}
-				// log.Printf("added Word [%s]", w)
+			for _, w := range words {
 				if err := z.Add(w); err != nil {
 					return err
+				}
+			}
+
+			if z.symbols {
+				// Symbols
+				ss, err := SplitSymbol(line)
+				if err != nil {
+					continue
+				}
+				for _, w := range ss {
+					if err := z.Add(w); err != nil {
+						return err
+					}
 				}
 			}
 		}
@@ -124,7 +134,7 @@ func (z *Zipf) Report() error {
 
 	for i := range z.collection {
 		x := z.collection[i]
-		fmt.Fprintf(z.out, "%s: %d\n", x.Word, x.Count)
+		fmt.Fprintf(z.out, "%s %d\n", x.Word, x.Count)
 	}
 	return nil
 }
@@ -150,12 +160,8 @@ func readLines(path string) ([]string, error) {
 	return lines, scan.Err()
 }
 
-func processLine(line string) []string {
-	return strings.Split(line, " ")
-}
-
 // Term struct contain final struct for terms/words
 type Term struct {
 	Word  string `json:"word"`
-	Count int32  `json:"count"`
+	Count int64  `json:"count"`
 }

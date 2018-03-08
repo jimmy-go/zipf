@@ -10,15 +10,16 @@ import (
 )
 
 var (
-	dir   = flag.String("path", "", "Directory.")
-	limit = flag.Int("limit", 100, "Number of words to display.")
+	dir     = flag.String("path", "", "Directory.")
+	limit   = flag.Int("limit", 100, "Number of words to display.")
+	symbols = flag.Bool("symbols-enabled", false, "Count symbols enabled.")
 )
 
 func main() {
 	flag.Parse()
 	log.SetFlags(log.Lshortfile)
 
-	z, err := zipf.New(*dir, *limit, os.Stdout)
+	z, err := zipf.New(*dir, *limit, *symbols, os.Stdout)
 	if err != nil {
 		log.Fatal(err)
 	}

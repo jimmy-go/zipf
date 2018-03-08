@@ -3,4 +3,6 @@
 set -o errexit
 set -o nounset
 
-echo "Skip implement"
+go build -o $GOBIN/zipf ./cmd/zipf
+
+$GOBIN/zipf -limit=100 -path=$1
